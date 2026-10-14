@@ -1,0 +1,4 @@
+generated-realm.json
+realm.template.json
+.env
+*.log

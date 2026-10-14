@@ -1,4 +1,4 @@
-name: Verify and publish API
+name: Verify and publish API and Keycloak
 
 on:
   pull_request:
@@ -49,6 +49,12 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: false
+      - name: Build Keycloak image
+        uses: docker/build-push-action@v7
+        with:
+          context: deploy/keycloak
+          platforms: linux/amd64,linux/arm64
+          push: false
 
   publish:
     if: startsWith(github.ref, 'refs/tags/v')
@@ -58,23 +64,40 @@ jobs:
       contents: read
       packages: write
     steps:
+      - name: Validate version tag
+        shell: bash
+        run: |
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Expected a version tag such as v1.0.0" >&2
+            exit 1
+          fi
       - uses: actions/checkout@v6
       - uses: docker/setup-qemu-action@v4
       - uses: docker/setup-buildx-action@v4
-      - name: Normalize image name
+      - name: Normalize image names
         id: image
         shell: bash
-        run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "api=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+          echo "keycloak=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/meterya-keycloak" >> "$GITHUB_OUTPUT"
       - uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Publish versioned image
+      - name: Publish versioned API image
         uses: docker/build-push-action@v7
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.image.outputs.name }}:${{ github.ref_name }}
+          tags: ${{ steps.image.outputs.api }}:${{ github.ref_name }}
+          labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+      - name: Publish versioned Keycloak image
+        uses: docker/build-push-action@v7
+        with:
+          context: deploy/keycloak
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.image.outputs.keycloak }}:${{ github.ref_name }}
           labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
