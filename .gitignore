@@ -1,0 +1,11 @@
+.env
+*.exe
+*.log
+coverage.out
+deploy/.env
+deploy/keycloak/generated-realm.json
+bin/
+.cache/
+.local/
+.vscode/
+AGENTS.md

@@ -1,0 +1,192 @@
+/* Keep Keycloak's forms and accessibility behavior; adapt only presentation. */
+:root {
+    color-scheme: light;
+    --meterya-background: #f6f8fb;
+    --meterya-surface: #fff;
+    --meterya-ink: #182b3a;
+    --meterya-muted: #61758a;
+    --meterya-border: #d5dee7;
+    --meterya-primary: #0f766e;
+    --meterya-hover: #115e59;
+    --meterya-error: #b42318;
+    --pf-global--primary-color--100: var(--meterya-primary);
+    --pf-global--primary-color--200: var(--meterya-hover);
+    --pf-global--active-color--100: var(--meterya-primary);
+    --pf-global--Color--100: var(--meterya-ink);
+    --pf-global--Color--200: var(--meterya-muted);
+    --pf-global--BackgroundColor--100: var(--meterya-surface);
+}
+
+:root[data-appearance="dark"] {
+    color-scheme: dark;
+    --meterya-background: #101820;
+    --meterya-surface: #18232f;
+    --meterya-ink: #e2e8f0;
+    --meterya-muted: #a5b4c5;
+    --meterya-border: #354455;
+    --meterya-primary: #7bd8ca;
+    --meterya-hover: #a2e9df;
+    --meterya-error: #ffb4ab;
+}
+
+.login-pf, .login-pf body {
+    background: var(--meterya-background);
+    color: var(--meterya-ink);
+    font-family: Roboto, "Segoe UI", sans-serif;
+    font-size: 16px;
+    min-height: 100%;
+}
+
+.login-pf-page {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+#kc-header { display: none; }
+
+.login-pf-page .card-pf {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 420px;
+    margin: 0;
+    padding: 40px 32px;
+    background: var(--meterya-surface);
+    border: 1px solid var(--meterya-border);
+    border-radius: 16px;
+    box-shadow: none;
+}
+
+/* Keycloak's supported footer hook supplies branding without copying forms. */
+.meterya-brand {
+    order: -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    color: var(--meterya-primary);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 36px;
+}
+
+.meterya-brand img { flex-shrink: 0; }
+.login-pf-page .login-pf-header { margin: 0 0 24px; }
+h1#kc-page-title { margin: 0; font-size: 22px; font-weight: 600; line-height: 1.4; }
+#kc-content-wrapper, #kc-form-wrapper { margin-top: 0; }
+.login-pf-page .form-group { margin-bottom: 20px; }
+.pf-c-form__label { color: var(--meterya-ink); font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+
+.pf-c-form-control {
+    height: 48px;
+    min-height: 48px;
+    border: 1px solid var(--meterya-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--meterya-surface);
+    color: var(--meterya-ink);
+    font-size: 16px;
+}
+
+.pf-c-form-control:focus {
+    border-color: var(--meterya-primary);
+    outline: none;
+    box-shadow: inset 0 0 0 1px var(--meterya-primary);
+}
+
+/* The inline error explains the problem; avoid PatternFly's background icon. */
+.pf-c-form-control[aria-invalid="true"] {
+    border-color: var(--meterya-error);
+    background-image: none;
+}
+.pf-c-form-control[aria-invalid="true"]:focus {
+    box-shadow: inset 0 0 0 1px var(--meterya-error);
+}
+.pf-c-form__helper-text.pf-m-error,
+.pf-c-form__helper-text.pf-m-error .pf-c-form__helper-text-icon {
+    color: var(--meterya-error);
+}
+.pf-c-input-group {
+    display: flex;
+    background: var(--meterya-surface);
+    border: 1px solid var(--meterya-border);
+    border-radius: 8px;
+}
+.pf-c-input-group:focus-within {
+    border-color: var(--meterya-primary);
+    box-shadow: inset 0 0 0 1px var(--meterya-primary);
+}
+.pf-c-input-group:has(.pf-c-form-control[aria-invalid="true"]) {
+    border-color: var(--meterya-error);
+}
+.pf-c-input-group:has(.pf-c-form-control[aria-invalid="true"]):focus-within {
+    box-shadow: inset 0 0 0 1px var(--meterya-error);
+}
+.pf-c-input-group .pf-c-form-control {
+    min-width: 0;
+    height: 46px;
+    min-height: 46px;
+    border: 0;
+    border-radius: 8px 0 0 8px;
+    background-color: transparent;
+}
+.pf-c-input-group .pf-c-form-control:focus {
+    outline: none;
+    box-shadow: none;
+}
+.pf-c-input-group .pf-c-button.pf-m-control {
+    flex-shrink: 0;
+    width: 48px;
+    border: 0;
+    border-radius: 0 8px 8px 0;
+    background: transparent;
+    color: var(--meterya-muted);
+}
+
+.pf-c-button::after { border: 0; }
+.login-pf a { color: var(--meterya-primary); }
+.login-pf a:hover { color: var(--meterya-hover); text-decoration: underline; }
+.login-pf a:focus-visible, .pf-c-button:focus-visible {
+    outline: 2px solid var(--meterya-primary);
+    outline-offset: 3px;
+}
+
+#kc-form-buttons { margin-top: 28px; text-align: center; }
+.pf-c-button.pf-m-primary {
+    display: inline-block;
+    width: auto;
+    min-width: 160px;
+    max-width: 100%;
+    min-height: 48px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    background: #0f766e;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+}
+.pf-c-button.pf-m-primary:hover { background: #115e59; }
+.pf-c-button.pf-m-primary:disabled { opacity: .6; cursor: wait; }
+#kc-info { margin: 24px 0 0; }
+#kc-info-wrapper { padding: 16px; background: var(--meterya-background); border-radius: 8px; }
+.pf-c-alert { margin-bottom: 20px; border-radius: 8px; }
+#kc-locale { position: relative; top: auto; right: auto; width: auto; margin-bottom: 16px; }
+
+@media (max-width: 480px) {
+    .login-pf-page { padding: 16px; }
+    .login-pf-page .card-pf { padding: 32px 24px; }
+}
+
+.meterya-factor-options { display: grid; gap: 16px; margin-top: 24px; }
+.meterya-factor-option { padding: 20px; border: 1px solid var(--meterya-border); border-radius: 8px; background: var(--meterya-surface); color: var(--meterya-ink); text-align: left; }
+.meterya-factor-option strong, .meterya-factor-option span { display: block; }
+.meterya-factor-option span { margin-top: 8px; color: var(--meterya-muted); }
+.meterya-factor-option:hover, .meterya-factor-option:focus-visible { border-color: var(--meterya-primary); outline: 2px solid var(--meterya-primary); }
+.meterya-factor-change { margin-top: 20px; text-align: center; }
+.meterya-factor-change button { border: 0; background: transparent; color: var(--meterya-primary); text-decoration: underline; }

@@ -1,0 +1,12 @@
+.git
+.env
+.cache/
+.local/
+.vscode/
+.github/
+deploy/
+tool/
+bin/
+README.md
+AGENTS.md
+LICENSE

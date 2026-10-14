@@ -1,0 +1,16 @@
+http://localhost:8080 {
+  handle /identity/* {
+    reverse_proxy keycloak:8080
+  }
+  @backend path /api/* /auth/* /health/*
+  handle @backend {
+    reverse_proxy api:8081
+  }
+  handle {
+    root * /srv
+    header Referrer-Policy no-referrer
+    header X-Content-Type-Options nosniff
+    try_files {path} /index.html
+    file_server
+  }
+}
