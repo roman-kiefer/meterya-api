@@ -9,20 +9,9 @@ Meterya API is the Go backend for household energy data. It stores immutable eve
 - Audit events and operator backup and restore
 - Keycloak authentication with second-factor support
 
-## Release images
-
-A version tag such as `v1.0.0` triggers the [release workflow](.github/workflows/release.yml). After tests and multi-platform builds pass, it publishes two private images for `linux/amd64` and `linux/arm64`:
-
-| Image | Purpose |
-| --- | --- |
-| `ghcr.io/<owner>/meterya-api:v1.0.0` | API server and operator commands |
-| `ghcr.io/<owner>/meterya-keycloak:v1.0.0` | Keycloak with the Meterya factor provider and login theme |
-
-Replace `<owner>` with the lowercase GitHub repository owner. Pull requests and ordinary commits build and test the images without publishing them. A GitHub version tag must be pushed to publish an image; a local tag alone is insufficient.
-
 ## Use with Docker Compose
 
-The deployment Compose stack will live in the proxy repository, alongside the HTTPS configuration and web app image. It should reference both versioned images above with the **same tag**, and run PostgreSQL 18. The API, Keycloak, and PostgreSQL should share a private Compose network. Expose only the HTTPS proxy on ports 80 and 443.
+The deployment Compose stack will live in the proxy repository, alongside the HTTPS configuration and web app image. It should reference the API and Keycloak images with the **same version tag**, and run PostgreSQL 18. The API, Keycloak, and PostgreSQL should share a private Compose network. Expose only the HTTPS proxy on ports 80 and 443.
 
 For private GHCR images, authenticate Docker on the deployment host with a GitHub credential that has `read:packages` access. Then, from the future proxy deployment directory:
 

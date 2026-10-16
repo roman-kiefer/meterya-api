@@ -91,7 +91,9 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.image.outputs.api }}:${{ github.ref_name }}
+          tags: |
+            ${{ steps.image.outputs.api }}:${{ github.ref_name }}
+            ${{ steps.image.outputs.api }}:latest
           labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
       - name: Publish versioned Keycloak image
         uses: docker/build-push-action@v7
@@ -99,5 +101,7 @@ jobs:
           context: deploy/keycloak
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.image.outputs.keycloak }}:${{ github.ref_name }}
+          tags: |
+            ${{ steps.image.outputs.keycloak }}:${{ github.ref_name }}
+            ${{ steps.image.outputs.keycloak }}:latest
           labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
