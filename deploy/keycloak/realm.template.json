@@ -14,6 +14,9 @@
   "webAuthnPolicyPasswordlessUserVerificationRequirement": "required",
   "browserFlow": "Meterya browser",
   "requiredActions": [
+    {"alias": "UPDATE_PASSWORD", "name": "Update Password", "providerId": "UPDATE_PASSWORD", "enabled": true, "defaultAction": false, "priority": 30},
+    {"alias": "CONFIGURE_TOTP", "name": "Configure OTP", "providerId": "CONFIGURE_TOTP", "enabled": true, "defaultAction": false, "priority": 40},
+    {"alias": "VERIFY_EMAIL", "name": "Verify Email", "providerId": "VERIFY_EMAIL", "enabled": true, "defaultAction": false, "priority": 50},
     {"alias": "UPDATE_EMAIL", "name": "Update Email", "providerId": "UPDATE_EMAIL", "enabled": true, "defaultAction": false, "priority": 50, "config": {"verify-email": "true"}},
     {"alias": "webauthn-register", "name": "WebAuthn Register", "providerId": "webauthn-register", "enabled": true, "defaultAction": false, "priority": 51},
     {"alias": "webauthn-register-passwordless", "name": "WebAuthn Register Passwordless", "providerId": "webauthn-register-passwordless", "enabled": true, "defaultAction": false, "priority": 52},
