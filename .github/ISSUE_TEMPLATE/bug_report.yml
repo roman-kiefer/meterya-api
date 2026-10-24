@@ -1,0 +1,58 @@
+name: Bug report
+description: Report a reproducible problem in Meterya API.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This repository covers the Go backend, PostgreSQL persistence, authentication integration, and the bundled Keycloak provider and theme.
+        For other components, see the routing guidance in [CONTRIBUTING.md](https://github.com/roman-kiefer/meterya-api/blob/main/CONTRIBUTING.md).
+        Do not disclose vulnerabilities here. Read [SECURITY.md](https://github.com/roman-kiefer/meterya-api/blob/main/SECURITY.md).
+        Use synthetic data and remove credentials, tokens, personal data, and identifying details from attachments.
+  - type: input
+    id: version
+    attributes:
+      label: Affected versions
+      description: "Include the API and Keycloak image tags and, where possible, digests, or the source commit and Go version. The latest tag changes over time."
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: "Include the PostgreSQL version, deployment method, and relevant proxy and Keycloak configuration, with all secrets removed."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Provide minimal numbered steps and synthetic example data.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized logs or screenshots
+      description: Optional. Do not attach configured .env files, realm exports, database dumps, backups, or expanded Compose configuration.
+  - type: checkboxes
+    id: preparation
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for this problem.
+          required: true
+        - label: This report contains no credentials or private data and does not disclose a suspected vulnerability.
+          required: true

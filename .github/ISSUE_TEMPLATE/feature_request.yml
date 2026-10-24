@@ -1,0 +1,43 @@
+name: Feature request
+description: Suggest an improvement to Meterya API.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This repository covers the Go backend, PostgreSQL persistence, authentication integration, and the bundled Keycloak provider and theme.
+        See [CONTRIBUTING.md](https://github.com/roman-kiefer/meterya-api/blob/main/CONTRIBUTING.md) for component routing.
+        Do not disclose vulnerabilities here; use [SECURITY.md](https://github.com/roman-kiefer/meterya-api/blob/main/SECURITY.md).
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: Describe the task you cannot currently accomplish and who would benefit.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed improvement
+      description: Describe the desired behavior without requiring a particular implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Include existing workarounds, if any.
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Optional. Link related issues or include synthetic examples without private data.
+  - type: checkboxes
+    id: preparation
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for this suggestion.
+          required: true
+        - label: This request contains no credentials or private data and does not disclose a suspected vulnerability.
+          required: true
