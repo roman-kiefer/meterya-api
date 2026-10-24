@@ -59,4 +59,10 @@ go vet ./...
 
 PostgreSQL integration tests require `TEST_DATABASE_URL` pointing to a dedicated test database; they are skipped when it is unset. The release workflow runs them with PostgreSQL.
 
+## Community
+
+See the [contribution guide](CONTRIBUTING.md), [security policy](SECURITY.md), and
+[accessibility information](ACCESSIBILITY.md). Please follow the
+[Code of Conduct](CODE_OF_CONDUCT.md).
+
 Licensed under [AGPL-3.0-only](LICENSE). Copyright © 2026 Meterya contributors.
