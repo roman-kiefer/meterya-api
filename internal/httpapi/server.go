@@ -19,6 +19,7 @@ import (
 )
 
 type Server struct {
+	Version         string
 	Store           *store.Store
 	Auth            *auth.Auth
 	Identity        auth.Keycloak
@@ -188,6 +189,13 @@ func (s *Server) Handler() http.Handler {
 		s.PhotoRecognizer = media.NewRecognizer()
 	}
 	mux := http.NewServeMux()
+	mux.HandleFunc("GET /api/v1/version", func(w http.ResponseWriter, r *http.Request) {
+		version := s.Version
+		if version == "" {
+			version = "dev"
+		}
+		write(w, http.StatusOK, map[string]string{"version": version})
+	})
 	reportFiles := downloads.New()
 	mux.HandleFunc("GET /health/live", func(w http.ResponseWriter, r *http.Request) { write(w, 200, map[string]string{"status": "ok"}) })
 	mux.HandleFunc("GET /health/ready", func(w http.ResponseWriter, r *http.Request) {

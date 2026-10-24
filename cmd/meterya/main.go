@@ -15,6 +15,8 @@ import (
 	"time"
 )
 
+var version = "dev"
+
 func env(name, fallback string) string {
 	if v := os.Getenv(name); v != "" {
 		return v
@@ -70,7 +72,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	server := httpapi.Server{Store: s, Auth: client, Identity: auth.Keycloak{Base: internal, Realm: "meterya", ClientID: "meterya-invitations", Secret: os.Getenv("KEYCLOAK_SERVICE_SECRET"), Client: &http.Client{Timeout: 20 * time.Second}}}
+	server := httpapi.Server{Version: version, Store: s, Auth: client, Identity: auth.Keycloak{Base: internal, Realm: "meterya", ClientID: "meterya-invitations", Secret: os.Getenv("KEYCLOAK_SERVICE_SECRET"), Client: &http.Client{Timeout: 20 * time.Second}}}
 	server.OperatorSubject = os.Getenv("OPERATOR_SUBJECT")
 	go func() {
 		ticker := time.NewTicker(15 * time.Minute)

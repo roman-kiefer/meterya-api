@@ -49,6 +49,8 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: false
+          build-args: |
+            VERSION=${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'dev' }}
       - name: Build Keycloak image
         uses: docker/build-push-action@v7
         with:
@@ -91,6 +93,8 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
+          build-args: |
+            VERSION=${{ github.ref_name }}
           tags: |
             ${{ steps.image.outputs.api }}:${{ github.ref_name }}
             ${{ steps.image.outputs.api }}:latest

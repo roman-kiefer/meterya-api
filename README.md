@@ -50,6 +50,29 @@ docker compose exec api meterya bootstrap --name Household --subject '<keycloak-
 
 The exact Compose services, domain, SMTP server, secrets, database volumes, and backup schedule belong to the deployment configuration. Keep secrets and the rendered realm out of Git. The API responds to `GET /health/live` and `GET /health/ready` for health checks.
 
+## Running API version
+
+`GET /api/v1/version` is available without authentication and returns HTTP 200
+with `Content-Type: application/json` and `Cache-Control: no-store`:
+
+```json
+{"version":"v1.2.3"}
+```
+
+The version is embedded in the binary at build time. Local builds default to
+`dev`. To build a binary or Docker image with a release version:
+
+```sh
+go build -ldflags="-X main.version=v1.2.3" -o meterya ./cmd/meterya
+docker build --build-arg VERSION=v1.2.3 -t meterya-api:v1.2.3 .
+```
+
+Docker builds without `VERSION` also default to `dev`. The release workflow
+embeds the release tag and publishes the same image under that tag and `latest`.
+An image deployed through `latest` therefore reports its original release tag.
+Runtime environment variables do not override the embedded version, and the
+response does not include commit IDs.
+
 ## Development checks
 
 ```sh
