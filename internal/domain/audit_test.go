@@ -16,6 +16,7 @@ func TestAuditDetailsWhitelistAndMeaningfulActions(t *testing.T) {
 	}{
 		{"ReadingCorrected", map[string]any{"id": "r", "reason": "Tippfehler", "reading": map[string]any{"date": "2026-10-01", "value": "42.000000", "register_id": "import"}}, "ReadingCorrected", "42.000000"},
 		{"TariffScheduleSaved", map[string]any{"unit_prices": []map[string]any{{"valid_from": "2026-01-01", "direction": "IMPORT", "cents": 35900}}}, "TariffScheduleSaved", "35.900"},
+		{"AdvancePaymentScheduleSaved", map[string]any{"advance_payments": []map[string]any{{"valid_from": "2026-08-15", "cents": 11500}}}, "AdvancePaymentScheduleSaved", "11500"},
 		{"WorkspaceMemberActivityChanged", map[string]any{"subject": "member", "active": false}, "MemberDeactivated", "false"},
 		{"MeterTransitionRecorded", map[string]any{"old_point": "old", "new_points": []string{"next"}, "date": "2026-06-01"}, "MeterTransitionRecorded", "Name next"},
 		{"VirtualPointSaved", map[string]any{"id": "v", "name": "Haus", "type": "SEQUENCE", "root_point": "old"}, "VirtualPointCreated", "Haus"},

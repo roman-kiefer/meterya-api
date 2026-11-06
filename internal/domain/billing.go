@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const CalculationVersion = 3
+const CalculationVersion = 4
 
 type AnnualPosition struct {
 	RegisterID string  `json:"register_id"`
@@ -38,7 +38,13 @@ type AnnualSummary struct {
 	Warnings     []string           `json:"warnings"`
 	BaseCents    *string            `json:"base_cents"`
 	NetCents     *string            `json:"net_cents"`
-	Positions    []AnnualPosition   `json:"positions"`
+	// AdvancePaymentCents and EstimatedBalanceCents are present only when the
+	// point has an advance payment schedule. The balance is an estimate, never
+	// a provider's final bill: positive means a remaining payment, negative a
+	// credit. It is absent while no costs can be calculated.
+	AdvancePaymentCents   *string          `json:"advance_payment_cents,omitempty"`
+	EstimatedBalanceCents *string          `json:"estimated_balance_cents,omitempty"`
+	Positions             []AnnualPosition `json:"positions"`
 }
 
 func date(s string) time.Time   { d, _ := time.Parse(time.DateOnly, s); return d }
@@ -265,6 +271,10 @@ func (p Point) periodSummary(intervals []ConsumptionInterval, start, end time.Ti
 	for _, price := range p.Tariffs.BasePrices {
 		basePeriods = append(basePeriods, price.PricePeriod)
 	}
+	// Advance payments follow the same measured coverage as the base price so
+	// that the estimated balance compares costs and payments of the same days.
+	advance := new(big.Rat)
+	advancePeriods := advancePaymentPeriods(p.AdvancePayments)
 	for _, interval := range intervals {
 		if interval.RegisterID != primary {
 			continue
@@ -273,6 +283,7 @@ func (p Point) periodSummary(intervals []ConsumptionInterval, start, end time.Ti
 		if !hi.After(lo) {
 			continue
 		}
+		addAdvancePayments(advance, advancePeriods, lo, hi)
 		cuts := priceCuts(lo, hi, basePeriods)
 		for i := 1; i < len(cuts); i++ {
 			left, right := cuts[i-1], cuts[i]
@@ -315,6 +326,14 @@ func (p Point) periodSummary(intervals []ConsumptionInterval, start, end time.Ti
 	if priced {
 		s := net.String()
 		summary.NetCents = &s
+	}
+	if len(p.AdvancePayments) > 0 {
+		summary.AdvancePaymentCents = cents(advance)
+		if summary.NetCents != nil {
+			paid, _ := new(big.Int).SetString(*summary.AdvancePaymentCents, 10)
+			balance := new(big.Int).Sub(net, paid).String()
+			summary.EstimatedBalanceCents = &balance
+		}
 	}
 	return summary
 }

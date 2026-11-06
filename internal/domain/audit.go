@@ -181,6 +181,15 @@ func AuditDetails(e *AuditEntry, payload []byte, version int64, lookup func(stri
 			add("base_price", fmt.Sprint(price.Cents), "cents")
 			add("period", price.Period, "period")
 		}
+	case "AdvancePaymentScheduleSaved":
+		var schedule struct {
+			Entries []AdvancePayment `json:"advance_payments"`
+		}
+		_ = json.Unmarshal(payload, &schedule)
+		for _, entry := range schedule.Entries {
+			add("valid_from", entry.From, "date")
+			add("advance_payment", fmt.Sprint(entry.Cents), "cents")
+		}
 	case "MemberInvited", "InvitationRetried", "InvitationRevoked", "InvitationDeleted", "InvitationAccepted":
 		e.Object = AuditReference{ID: e.Object.ID, Name: text(p, "email"), Kind: "invitation"}
 		plain("email")

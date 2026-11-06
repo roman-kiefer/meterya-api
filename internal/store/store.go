@@ -144,6 +144,12 @@ func (s *Store) Point(ctx context.Context, ws, id string) (domain.Point, error) 
 	return p, err
 }
 
+// advancePaymentEvent is the payload of AdvancePaymentScheduleSaved. It always
+// contains the complete schedule, sorted by validity start.
+type advancePaymentEvent struct {
+	AdvancePayments []domain.AdvancePayment `json:"advance_payments"`
+}
+
 type Command struct {
 	PhotoEdits                           []domain.PhotoEdit
 	EditedPhoto                          []byte
@@ -155,6 +161,7 @@ type Command struct {
 	NewPoint                             *domain.Point
 	Reading                              *domain.Reading
 	Tariffs                              *domain.Tariffs
+	AdvancePayments                      *[]domain.AdvancePayment
 	Name                                 *string
 	Serial                               *string
 	Archived                             *bool
@@ -164,7 +171,7 @@ type Command struct {
 
 func (s *Store) Execute(ctx context.Context, c Command) (domain.Point, error) {
 	var p domain.Point
-	if c.PhotoID != "" && (c.Reading == nil && c.AttachReadingID == "" || c.NewPoint != nil || c.Tariffs != nil || c.Name != nil || c.Serial != nil || c.Archived != nil || c.ReadingChange != nil) {
+	if c.PhotoID != "" && (c.Reading == nil && c.AttachReadingID == "" || c.NewPoint != nil || c.Tariffs != nil || c.AdvancePayments != nil || c.Name != nil || c.Serial != nil || c.Archived != nil || c.ReadingChange != nil) {
 		return p, domain.Fail("VALIDATION_FAILED")
 	}
 	tx, err := s.Pool.Begin(ctx)
@@ -176,7 +183,7 @@ func (s *Store) Execute(ctx context.Context, c Command) (domain.Point, error) {
 	if err = tx.QueryRow(ctx, roleQuery+" FOR SHARE", c.Workspace, c.Subject).Scan(&role); err != nil {
 		return p, domain.Fail("PERMISSION_DENIED")
 	}
-	if (c.NewPoint != nil || c.Tariffs != nil || c.Name != nil || c.Serial != nil || c.Archived != nil) && !CanManage(role) {
+	if (c.NewPoint != nil || c.Tariffs != nil || c.AdvancePayments != nil || c.Name != nil || c.Serial != nil || c.Archived != nil) && !CanManage(role) {
 		return p, domain.Fail("PERMISSION_DENIED")
 	}
 	if role == "GUEST" {
@@ -309,6 +316,14 @@ func (s *Store) Execute(ctx context.Context, c Command) (domain.Point, error) {
 			p.Version++
 			payload, _ = json.Marshal(c.Tariffs)
 			kind = "TariffScheduleSaved"
+		} else if c.AdvancePayments != nil {
+			if err = p.ValidateAdvancePayments(*c.AdvancePayments); err != nil {
+				return p, err
+			}
+			p.AdvancePayments = domain.SortedAdvancePayments(*c.AdvancePayments)
+			p.Version++
+			payload, _ = json.Marshal(advancePaymentEvent{p.AdvancePayments})
+			kind = "AdvancePaymentScheduleSaved"
 		} else {
 			if c.Reading == nil {
 				return p, domain.Fail("VALIDATION_FAILED")
@@ -634,6 +649,20 @@ func (s *Store) Rebuild(ctx context.Context) error {
 				rows.Close()
 				return err
 			}
+			p.Version = version
+			points[id] = p
+		case "AdvancePaymentScheduleSaved":
+			p, ok := points[id]
+			if !ok {
+				rows.Close()
+				return errors.New("advance payments without point")
+			}
+			var v advancePaymentEvent
+			if err = json.Unmarshal(body, &v); err != nil {
+				rows.Close()
+				return err
+			}
+			p.AdvancePayments = v.AdvancePayments
 			p.Version = version
 			points[id] = p
 		case "MonthlyStatementsImported":

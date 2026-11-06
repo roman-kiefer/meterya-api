@@ -69,6 +69,7 @@ type Point struct {
 	Meter             Meter              `json:"meter"`
 	Readings          []Reading          `json:"readings"`
 	Tariffs           Tariffs            `json:"tariffs"`
+	AdvancePayments   []AdvancePayment   `json:"advance_payments,omitempty"`
 	MonthlyStatements []MonthlyStatement `json:"monthly_statements,omitempty"`
 }
 
