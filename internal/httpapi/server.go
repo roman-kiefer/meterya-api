@@ -95,7 +95,7 @@ func failure(w http.ResponseWriter, err error) {
 		status = 429
 	case "BACKUP_TOO_LARGE", "PHOTO_TOO_LARGE":
 		status = 413
-	case "CONFLICT", "READING_ALREADY_EXISTS", "AGGREGATE_VERSION_CONFLICT", "IDEMPOTENCY_CONFLICT", "TARIFF_OVERLAP", "POINT_ARCHIVED", "POINT_LINKED", "VIRTUAL_SOURCE_IN_USE", "VIRTUAL_ALREADY_EXISTS", "VIRTUAL_AMBIGUOUS", "VIRTUAL_INCOMPATIBLE", "VIRTUAL_CYCLE", "VIRTUAL_CONTINUATION_REQUIRED", "VIRTUAL_TRANSITION_REQUIRED", "SOURCE_MISSING", "SERIAL_ALREADY_ACTIVE", "LAST_WORKSPACE_ADMIN":
+	case "CONFLICT", "READING_ALREADY_EXISTS", "AGGREGATE_VERSION_CONFLICT", "IDEMPOTENCY_CONFLICT", "TARIFF_OVERLAP", "ADVANCE_PAYMENT_DUPLICATE", "POINT_ARCHIVED", "POINT_LINKED", "VIRTUAL_SOURCE_IN_USE", "VIRTUAL_ALREADY_EXISTS", "VIRTUAL_AMBIGUOUS", "VIRTUAL_INCOMPATIBLE", "VIRTUAL_CYCLE", "VIRTUAL_CONTINUATION_REQUIRED", "VIRTUAL_TRANSITION_REQUIRED", "SOURCE_MISSING", "SERIAL_ALREADY_ACTIVE", "LAST_WORKSPACE_ADMIN":
 		status = 409
 	case "INTERNAL_ERROR":
 		status = 500
@@ -321,6 +321,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("POST /api/v1/workspaces/{ws}/points/{point}/readings/{reading}/correct", s.guard(s.changeReading))
 	mux.HandleFunc("POST /api/v1/workspaces/{ws}/points/{point}/readings/{reading}/retract", s.guard(s.changeReading))
 	mux.HandleFunc("POST /api/v1/workspaces/{ws}/points/{point}/tariffs", s.guard(s.saveTariffs))
+	mux.HandleFunc("POST /api/v1/workspaces/{ws}/points/{point}/advance-payments", s.guard(s.saveAdvancePayments))
 	mux.HandleFunc("POST /api/v1/workspaces/{ws}/points/{point}/reports/{year}/download", s.guard(s.prepareReport(reportFiles)))
 	mux.HandleFunc("GET /api/v1/workspaces/{ws}/points/{point}/reports/{year}/download/{export}", s.guard(func(w http.ResponseWriter, r *http.Request, v store.Session) error {
 		if err := s.reportPointExists(r); err != nil {
